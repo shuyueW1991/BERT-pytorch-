@@ -26,6 +26,6 @@ class TransformerBlock(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, x, mask):
-        x = self.input_sublayer(x, lambda _x: self.attention.forward(_x, _x, _x, mask=mask))
+        x = self.input_sublayer(x, lambda _x: self.attention.forward(_x, _x, _x, mask=mask))  ## it does not say simply `sel;f.attention` just because it requries three inputting parameters instead of one, which is the case in `self.feed_forward` in the following line.
         x = self.output_sublayer(x, self.feed_forward)
         return self.dropout(x)

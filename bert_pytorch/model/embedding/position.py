@@ -22,4 +22,9 @@ class PositionalEmbedding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        return self.pe[:, :x.size(1)]
+        return self.pe[:, :x.size(1)] 
+    ## from the annotation of `# torch.ByteTensor([batch_size, 1, seq_len, seq_len)` and the following line
+    ## `mask = (x > 0).unsqueeze(1).repeat(1, x.size(1), 1).unsqueeze(1)` in class BERT in bert.py, 
+    ## we come to assume that `x.size(1)` referring to seq_len. 
+    ## So, back to here, the pe has its 0th dimen as 1 as batch_size (thanks to  unsqueeze(0)), 1th as seq_len, 2nd as d_model.
+    

@@ -24,7 +24,7 @@ class BERTEmbedding(nn.Module):
         self.token = TokenEmbedding(vocab_size=vocab_size, embed_size=embed_size)
         self.position = PositionalEmbedding(d_model=self.token.embedding_dim)
         self.segment = SegmentEmbedding(embed_size=self.token.embedding_dim)
-        self.dropout = nn.Dropout(p=dropout)
+        self.dropout = nn.Dropout(p=dropout)    ## Dropout is a regularization technique used in neural networks to prevent overfitting. During training, a certain percentage of neurons are randomly "dropped out" (i.e., their outputs are set to zero) at each iteration. This forces the network to learn more robust and generalizable features. WHEREAS Residual Networks (ResNets) are a type of deep neural network architecture that addresses the vanishing gradient problem, which can hinder the training of very deep networks. ResNets introduce "skip connections" that allow the gradient to flow directly from earlier layers to later layers, making it easier for the network to learn and optimize.
         self.embed_size = embed_size
 
     def forward(self, sequence, segment_label):

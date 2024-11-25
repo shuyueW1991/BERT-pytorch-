@@ -35,8 +35,17 @@ class BERT(nn.Module):
 
     def forward(self, x, segment_info):
         # attention masking for padded token
+        ## before masking here: 'x' is of (batch_size, seq_len)
+        ## after masking here:
         # torch.ByteTensor([batch_size, 1, seq_len, seq_len)
-        mask = (x > 0).unsqueeze(1).repeat(1, x.size(1), 1).unsqueeze(1)
+        mask = (x > 0).unsqueeze(1).repeat(1, x.size(1), 1).unsqueeze(1)    ## This line of code creates a mask for padded tokens in a sequence.
+                                                                            ## Note, this is mask, not x
+                                                                            ## (x > 0) creates a boolean tensor where True indicates a non-padded token (i.e., a token with an index greater than 0) and False indicates a padded token.
+                                                                            ## unsqueeze(1) adds a new dimension of size 1 to the tensor, effectively making it a 3D tensor.
+                                                                            ## repeat(1, x.size(1), 1) repeats the tensor along the second dimension (x.size(1)) to match the sequence length. 
+                                                                            ## This creates a tensor with shape (batch_size, seq_len, seq_len).
+                                                                            ## The final unsqueeze(1) adds another dimension, resulting in a tensor with shape (batch_size, 1, seq_len, seq_len).
+                                                                            ## This mask is used to ignore padded tokens during self-attention computations in the Transformer model.
 
         # embedding the indexed sequence to sequence of vectors
         x = self.embedding(x, segment_info)

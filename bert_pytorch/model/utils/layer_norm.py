@@ -14,4 +14,6 @@ class LayerNorm(nn.Module):
     def forward(self, x):
         mean = x.mean(-1, keepdim=True)
         std = x.std(-1, keepdim=True)
-        return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
+        return self.a_2 * (x - mean) / (std + self.eps) + self.b_2   ## broadcasting is involved in the following operations:
+                                                                     ## self.a_2 * (x - mean): Here, self.a_2 has shape (A,) and (x - mean) has shape (B, C, A). To perform the element-wise multiplication, self.a_2 is broadcasted to shape (1, 1, A) or equivalently (B, C, A) to match the shape of (x - mean).
+                                                                     ## self.b_2 is added to the result of the previous operation. Assuming self.b_2 has shape (A,), it is broadcasted to shape (B, C, A) to match the shape of the result.

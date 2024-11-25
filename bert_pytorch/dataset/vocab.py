@@ -49,21 +49,23 @@ class TorchVocab(object):
         # sort by frequency, then alphabetically
         words_and_frequencies = sorted(counter.items(), key=lambda tup: tup[0])
         words_and_frequencies.sort(key=lambda tup: tup[1], reverse=True)
+        ## The follwoing line will sort the list by frequency in descending order, and then alphabetically by word in case of a tie.
+        ## words_and_frequencies = sorted(counter.items(), key=lambda tup: (-tup[1], tup[0]))
 
         for word, freq in words_and_frequencies:
             if freq < min_freq or len(self.itos) == max_size:
                 break
             self.itos.append(word)
 
-        # stoi is simply a reverse dict for itos
-        self.stoi = {tok: i for i, tok in enumerate(self.itos)}
+        # stoi is simply a reverse dict for itos, while itos is a list.
+        self.stoi = {tok: i for i, tok in enumerate(self.itos)}   ## itos is a defaultdict, with index (instead of counts of instances) and a word/token.
 
         self.vectors = None
         if vectors is not None:
-            self.load_vectors(vectors, unk_init=unk_init, cache=vectors_cache)
+            self.load_vectors(vectors, unk_init=unk_init, cache=vectors_cache)  # load_vectors seems not defined somwhere.
         else:
-            assert unk_init is None and vectors_cache is None
-
+            assert unk_init is None and vectors_cache is None 
+            
     def __eq__(self, other):
         if self.freqs != other.freqs:
             return False
@@ -81,7 +83,7 @@ class TorchVocab(object):
     def vocab_rerank(self):
         self.stoi = {word: i for i, word in enumerate(self.itos)}
 
-    def extend(self, v, sort=False):
+    def extend(self, v, sort=False):  ## merge other vocab into this
         words = sorted(v.itos) if sort else v.itos
         for w in words:
             if w not in self.stoi:
@@ -130,7 +132,7 @@ class WordVocab(Vocab):
                 counter[word] += 1
         super().__init__(counter, max_size=max_size, min_freq=min_freq)
 
-    def to_seq(self, sentence, seq_len=None, with_eos=False, with_sos=False, with_len=False):
+    def to_seq(self, sentence, seq_len=None, with_eos=False, with_sos=False, with_len=False):  ## deal with one sentence.
         if isinstance(sentence, str):
             sentence = sentence.split()
 

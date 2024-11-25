@@ -49,6 +49,10 @@ class BERTTrainer:
         if with_cuda and torch.cuda.device_count() > 1:
             print("Using %d GPUS for BERT" % torch.cuda.device_count())
             self.model = nn.DataParallel(self.model, device_ids=cuda_devices)
+            ## Overview of nn.DataParallel: Functionality
+            ## Input Splitting: nn.DataParallel divides the input batch into smaller chunks, distributing these chunks across the available GPUs. Each GPU processes its chunk independently during the forward pass12.
+            ## Model Replication: The model is replicated on each GPU, meaning that each GPU has its own copy of the model parameters. This allows each GPU to compute its portion of the data without needing to communicate with others during computation23.
+            ## Gradient Aggregation: During the backward pass, gradients computed on each GPU are summed and then applied to the original model. This ensures that all GPUs contribute to the model's learning process
 
         # Setting the train and test data loader
         self.train_data = train_dataloader
@@ -105,7 +109,7 @@ class BERTTrainer:
             next_loss = self.criterion(next_sent_output, data["is_next"])
 
             # 2-2. NLLLoss of predicting masked token word
-            mask_loss = self.criterion(mask_lm_output.transpose(1, 2), data["bert_label"])
+            mask_loss = self.criterion(mask_lm_output.transpose(1, 2), data["bert_label"])    ## NLLLoss input should be (batch_size, N_class, seq_len), please check the docs in under link. https://pytorch.org/docs/stable/nn.html?highlight=nll#torch.nn.NLLLoss
 
             # 2-3. Adding next_loss and mask_loss : 3.4 Pre-training Procedure
             loss = next_loss + mask_loss

@@ -15,7 +15,7 @@ class BERTDataset(Dataset):
         self.encoding = encoding
 
         with open(corpus_path, "r", encoding=encoding) as f:
-            if self.corpus_lines is None and not on_memory:
+            if self.corpus_lines is None and not on_memory:   ## `on_memory` being false means it doesn't load on memory like whta the `self.lines` doing in the class, but rather let file reader point (i.e. `self.file` and `self.random_file`) do the job.
                 for _ in tqdm.tqdm(f, desc="Loading Dataset", total=corpus_lines):
                     self.corpus_lines += 1
 
@@ -81,11 +81,11 @@ class BERTDataset(Dataset):
                 else:
                     tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
 
-                output_label.append(self.vocab.stoi.get(token, self.vocab.unk_index))
+                output_label.append(self.vocab.stoi.get(token, self.vocab.unk_index))  ## what is output_label doing here?
 
             else:
                 tokens[i] = self.vocab.stoi.get(token, self.vocab.unk_index)
-                output_label.append(0)
+                output_label.append(0)   ## https://github.com/codertimo/BERT-pytorch/issues/36  , it is the same with padding index. In pretrain.py, tokens with zero index is ignored: `self.criterion = nn.NLLLoss(ignore_index=0)`
 
         return tokens, output_label
 
@@ -96,7 +96,7 @@ class BERTDataset(Dataset):
         if random.random() > 0.5:
             return t1, t2, 1
         else:
-            return t1, self.get_random_line(), 0
+            return t1, self.get_random_line(), 0  ## here maybe requires to avoid the randomly picked t2 to be the right t2.
 
     def get_corpus_line(self, item):
         if self.on_memory:

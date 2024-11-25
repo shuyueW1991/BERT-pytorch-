@@ -36,10 +36,10 @@ class NextSentencePrediction(nn.Module):
         """
         super().__init__()
         self.linear = nn.Linear(hidden, 2)
-        self.softmax = nn.LogSoftmax(dim=-1)
+        self.softmax = nn.LogSoftmax(dim=-1)  ##since the output of the linear layer is a 2D tensor with shape (batch_size, 2), dim=-1 means that the softmax function will be applied along the second dimension (i.e., the dimension of size 2), which represents the two classes.
 
     def forward(self, x):
-        return self.softmax(self.linear(x[:, 0]))
+        return self.softmax(self.linear(x[:, 0]))  ## only using the first token's representation ( likely the [CLS] token) for the next sentence prediction task, 
 
 
 class MaskedLanguageModel(nn.Module):
@@ -58,4 +58,4 @@ class MaskedLanguageModel(nn.Module):
         self.softmax = nn.LogSoftmax(dim=-1)
 
     def forward(self, x):
-        return self.softmax(self.linear(x))
+        return self.softmax(self.linear(x))   ## whereas here, the class here is using the entire sequence of tokens for the masked language modeling task.
