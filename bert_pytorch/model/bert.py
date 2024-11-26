@@ -24,7 +24,7 @@ class BERT(nn.Module):
         self.attn_heads = attn_heads
 
         # paper noted they used 4*hidden_size for ff_network_hidden_size
-        self.feed_forward_hidden = hidden * 4
+        self.feed_forward_hidden = hidden * 4  ## corresponds to the third parameter of TransformerBlock.
 
         # embedding for BERT, sum of positional, segment, token embeddings
         self.embedding = BERTEmbedding(vocab_size=vocab_size, embed_size=hidden)
